@@ -1,0 +1,189 @@
+{
+    "best_model": "Extra Trees",
+    "feature_names": [
+        "Present_Price",
+        "Kms_Driven",
+        "Owner",
+        "number_of_year",
+        "Fuel_Type_Diesel",
+        "Fuel_Type_Petrol",
+        "Seller_Type_Individual",
+        "Transmission_Manual"
+    ],
+    "feature_importances": {
+        "Present_Price": 0.5353194095758116,
+        "Kms_Driven": 0.03303314835243513,
+        "Owner": 0.0004772282395405879,
+        "number_of_year": 0.08937824884251966,
+        "Fuel_Type_Diesel": 0.04086120573904578,
+        "Fuel_Type_Petrol": 0.0277374266134491,
+        "Seller_Type_Individual": 0.23275172354759183,
+        "Transmission_Manual": 0.04044160908960636
+    },
+    "metrics": {
+        "Linear Regression": {
+            "MAE": 1.228324514322519,
+            "MSE": 3.378564707950637,
+            "RMSE": 1.8380872416592846,
+            "R2": 0.8770281948906475
+        },
+        "Extra Trees": {
+            "MAE": 0.4978078947368429,
+            "MSE": 0.6447143881578962,
+            "RMSE": 0.8029410863555907,
+            "R2": 0.9765339133789038
+        },
+        "Gradient Boosting": {
+            "MAE": 0.5374655376599736,
+            "MSE": 0.8701092201051412,
+            "RMSE": 0.932796451593348,
+            "R2": 0.9683300718832396
+        },
+        "Random Forest": {
+            "MAE": 0.5988539473684213,
+            "MSE": 0.8501822643421055,
+            "RMSE": 0.9220532871489074,
+            "R2": 0.9690553661819542
+        },
+        "Tuned Random Forest": {
+            "MAE": 0.5956167473975535,
+            "MSE": 0.8278840784848176,
+            "RMSE": 0.9098813540703082,
+            "R2": 0.969866967676246
+        }
+    },
+    "dataset_summary": {
+        "total_records": 301,
+        "min_price": 0.1,
+        "max_price": 35.0,
+        "mean_price": 4.661295681063123,
+        "min_kms": 500,
+        "max_kms": 500000,
+        "fuel_types": [
+            "Petrol",
+            "Diesel",
+            "CNG"
+        ],
+        "transmission_types": [
+            "Manual",
+            "Automatic"
+        ],
+        "seller_types": [
+            "Dealer",
+            "Individual"
+        ]
+    },
+    "presets": [
+        {
+            "name": "City",
+            "present_price": 11.79,
+            "year": 2015,
+            "kms_driven": 36000,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 7.42
+        },
+        {
+            "name": "Fortuner",
+            "present_price": 30.73,
+            "year": 2014,
+            "kms_driven": 50024,
+            "fuel_type": "Diesel",
+            "transmission": "Automatic",
+            "seller_type": "Dealer",
+            "avg_selling_price": 18.69
+        },
+        {
+            "name": "Innova",
+            "present_price": 17.85,
+            "year": 2015,
+            "kms_driven": 38000,
+            "fuel_type": "Diesel",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 12.78
+        },
+        {
+            "name": "Verna",
+            "present_price": 9.4,
+            "year": 2013,
+            "kms_driven": 40599,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 6.11
+        },
+        {
+            "name": "Corolla Altis",
+            "present_price": 17.58,
+            "year": 2012,
+            "kms_driven": 56000,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 7.18
+        },
+        {
+            "name": "Ciaz",
+            "present_price": 9.76,
+            "year": 2015,
+            "kms_driven": 20273,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 7.47
+        },
+        {
+            "name": "Swift",
+            "present_price": 6.34,
+            "year": 2014,
+            "kms_driven": 39000,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 4.54
+        },
+        {
+            "name": "I20",
+            "present_price": 7.21,
+            "year": 2013,
+            "kms_driven": 32000,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 4.77
+        },
+        {
+            "name": "Brio",
+            "present_price": 6.04,
+            "year": 2015,
+            "kms_driven": 17750,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 4.75
+        },
+        {
+            "name": "Wagon R",
+            "present_price": 4.45,
+            "year": 2012,
+            "kms_driven": 46189,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Dealer",
+            "avg_selling_price": 2.51
+        },
+        {
+            "name": "Royal Enfield Classic 350",
+            "present_price": 1.47,
+            "year": 2015,
+            "kms_driven": 17500,
+            "fuel_type": "Petrol",
+            "transmission": "Manual",
+            "seller_type": "Individual",
+            "avg_selling_price": 1.14
+        }
+    ],
+    "trained_at": "2026-10-21T16:16:52.053804"
+}

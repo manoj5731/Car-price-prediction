@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Car Resale Price Valuation & Market Analytics Engine based on Machine Learning">
+    <title>AutoValuate AI — Intelligent Car Price Prediction & Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Background glowing ambient lights -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand-group">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+                        <circle cx="7" cy="17" r="2"/>
+                        <path d="M9 17h6"/>
+                        <circle cx="17" cy="17" r="2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">AutoValuate <span class="accent-text">AI</span></h1>
+                    <p class="brand-subtitle">Smart Machine Learning Car Price Prediction Engine</p>
+                </div>
+            </div>
+
+            <div class="header-badges">
+                <div class="model-badge">
+                    <span class="pulse-dot"></span>
+                    <span class="badge-label">Model:</span>
+                    <strong id="header-best-model">{{ best_model }}</strong>
+                    <span class="accuracy-tag" id="header-accuracy">R² {{ "%.3f"|format(best_metrics.R2 if best_metrics.R2 else 0.976) }}</span>
+                </div>
+                <button id="theme-toggle-btn" class="icon-button" title="Toggle Theme" aria-label="Toggle Theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+
+        <!-- Quick Presets Carousel / Bar -->
+        <section class="presets-section" aria-label="Popular Car Models">
+            <div class="section-header-compact">
+                <span class="eyebrow">Quick Presets</span>
+                <span class="hint">Click any popular model to load verified specs instantly</span>
+            </div>
+            <div class="presets-scroll" id="presets-carousel">
+                {% for preset in presets %}
+                <button class="preset-card" 
+                        data-name="{{ preset.name }}"
+                        data-price="{{ preset.present_price }}"
+                        data-year="{{ preset.year }}"
+                        data-kms="{{ preset.kms_driven }}"
+                        data-fuel="{{ preset.fuel_type }}"
+                        data-transmission="{{ preset.transmission }}"
+                        data-seller="{{ preset.seller_type }}"
+                        id="preset-{{ loop.index }}">
+                    <div class="preset-header">
+                        <span class="preset-name">{{ preset.name }}</span>
+                        <span class="preset-tag">{{ preset.year }}</span>
+                    </div>
+                    <div class="preset-specs">
+                        <span>{{ preset.fuel_type }}</span> • <span>{{ preset.transmission }}</span>
+                    </div>
+                    <div class="preset-price-row">
+                        <span class="price-sub">Showroom: ₹{{ preset.present_price }}L</span>
+                        <span class="price-avg">Avg: ₹{{ preset.avg_selling_price }}L</span>
+                    </div>
+                </button>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Prediction Core Workspace Grid -->
+        <div class="valuation-grid">
+
+            <!-- Left: Interactive Configuration Form -->
+            <section class="glass-card config-card" aria-label="Car Specification Form">
+                <div class="card-header">
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10M18 20V4M6 20v-4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="card-title">Vehicle Parameters</h2>
+                        <p class="card-desc">Adjust sliders or enter numbers for instant AI revaluation</p>
+                    </div>
+                </div>
+
+                <form id="valuation-form" class="valuation-form">
+                    <!-- Showroom Price Slider & Input -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="present-price-input">
+                                <span>Showroom / Original Price</span>
+                                <span class="help-tooltip" title="Current or original ex-showroom price in Lakhs INR (₹1 Lakh = 100,000)">ⓘ</span>
+                            </label>
+                            <div class="value-badge">
+                                <span class="unit">₹</span>
+                                <span id="present-price-display" class="highlight-val">9.54</span>
+                                <span class="unit">Lakh</span>
+                            </div>
+                        </div>
+                        <div class="input-slider-dual">
+                            <input type="range" id="present-price-slider" min="0.3" max="45.0" step="0.1" value="9.54" class="custom-slider">
+                            <input type="number" id="present-price-input" min="0.3" max="95.0" step="0.05" value="9.54" class="custom-num-input">
+                        </div>
+                    </div>
+
+                    <!-- Year of Purchase Slider & Display -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="year-input">
+                                <span>Year of Purchase</span>
+                                <span class="help-tooltip" title="Year the vehicle was first registered">ⓘ</span>
+                            </label>
+                            <div class="value-badge">
+                                <span id="car-age-badge" class="age-pill">7 Years Old</span>
+                                <span id="year-display" class="highlight-val">2017</span>
+                            </div>
+                        </div>
+                        <div class="input-slider-dual">
+                            <input type="range" id="year-slider" min="2004" max="2024" step="1" value="2017" class="custom-slider">
+                            <input type="number" id="year-input" min="2000" max="2024" step="1" value="2017" class="custom-num-input">
+                        </div>
+                    </div>
+
+                    <!-- Kilometers Driven Slider & Input -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="kms-input">
+                                <span>Odometer (Kilometers Driven)</span>
+                                <span class="help-tooltip" title="Total distance driven recorded on the odometer">ⓘ</span>
+                            </label>
+                            <div class="value-badge">
+                                <span id="kms-display" class="highlight-val">42,000</span>
+                                <span class="unit">km</span>
+                            </div>
+                        </div>
+                        <div class="input-slider-dual">
+                            <input type="range" id="kms-slider" min="500" max="250000" step="1000" value="42000" class="custom-slider">
+                            <input type="number" id="kms-input" min="0" max="500000" step="500" value="42000" class="custom-num-input">
+                        </div>
+                    </div>
+
+                    <!-- Fuel Type Pills -->
+                    <div class="form-group">
+                        <label class="group-label">Fuel Type</label>
+                        <div class="pill-selector" id="fuel-type-selector">
+                            <label class="pill-option active" id="fuel-petrol-label">
+                                <input type="radio" name="fuel_type" value="Petrol" checked id="fuel-petrol">
+                                <span class="pill-content">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22v-8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8M13 10V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M18 7a2 2 0 0 1 2 2v10a3 3 0 0 1-3 3"/></svg>
+                                    Petrol
+                                </span>
+                            </label>
+                            <label class="pill-option" id="fuel-diesel-label">
+                                <input type="radio" name="fuel_type" value="Diesel" id="fuel-diesel">
+                                <span class="pill-content">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.07 17.07A10 10 0 1 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+                                    Diesel
+                                </span>
+                            </label>
+                            <label class="pill-option" id="fuel-cng-label">
+                                <input type="radio" name="fuel_type" value="CNG" id="fuel-cng">
+                                <span class="pill-content">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/></svg>
+                                    CNG
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Transmission & Seller Type Row -->
+                    <div class="form-row-dual">
+                        <div class="form-group">
+                            <label class="group-label">Transmission</label>
+                            <div class="segmented-control" id="transmission-selector">
+                                <label class="seg-item active" id="trans-manual-label">
+                                    <input type="radio" name="transmission" value="Manual" checked id="trans-manual">
+                                    <span>Manual</span>
+                                </label>
+                                <label class="seg-item" id="trans-auto-label">
+                                    <input type="radio" name="transmission" value="Automatic" id="trans-auto">
+                                    <span>Automatic</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="group-label">Seller Type</label>
+                            <div class="segmented-control" id="seller-selector">
+                                <label class="seg-item active" id="seller-dealer-label">
+                                    <input type="radio" name="seller_type" value="Dealer" checked id="seller-dealer">
+                                    <span>Dealer</span>
+                                </label>
+                                <label class="seg-item" id="seller-indiv-label">
+                                    <input type="radio" name="seller_type" value="Individual" id="seller-indiv">
+                                    <span>Individual</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Previous Owners Selector -->
+                    <div class="form-group">
+                        <label class="group-label">Previous Owners</label>
+                        <div class="owner-selector" id="owner-selector">
+                            <label class="owner-pill active" id="owner-0-label">
+                                <input type="radio" name="owner" value="0" checked id="owner-0">
+                                <span>First Owner (0)</span>
+                            </label>
+                            <label class="owner-pill" id="owner-1-label">
+                                <input type="radio" name="owner" value="1" id="owner-1">
+                                <span>Second (1)</span>
+                            </label>
+                            <label class="owner-pill" id="owner-3-label">
+                                <input type="radio" name="owner" value="3" id="owner-3">
+                                <span>3+ Owners</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="button" id="recalculate-btn" class="primary-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                            </svg>
+                            <span>Estimate Resale Price</span>
+                        </button>
+                        <button type="button" id="randomize-btn" class="secondary-btn" title="Randomize Parameters">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+                            </svg>
+                            <span>Randomize</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right: Real-Time Valuation & Predictive Intelligence Dashboard -->
+            <section class="glass-card results-card" aria-label="Prediction Results">
+                <!-- Main Value Showcase Card -->
+                <div class="hero-valuation-box">
+                    <div class="valuation-meta-top">
+                        <span class="pulse-chip">
+                            <span class="chip-dot"></span> Real-time AI Prediction
+                        </span>
+                        <span id="deal-rating-badge" class="deal-badge badge-green">Healthy Market Average</span>
+                    </div>
+
+                    <div class="price-display-wrapper">
+                        <span class="currency-symbol">₹</span>
+                        <span id="predicted-price-number" class="price-giant">5.85</span>
+                        <span class="currency-unit">Lakh</span>
+                    </div>
+
+                    <div class="sub-valuation-row">
+                        <div class="sub-stat">
+                            <span class="sub-stat-label">Estimated Range</span>
+                            <span id="price-range-text" class="sub-stat-value">₹ 5.25L - ₹ 6.45L</span>
+                        </div>
+                        <div class="sub-stat-divider"></div>
+                        <div class="sub-stat">
+                            <span class="sub-stat-label">Value Retained</span>
+                            <span id="retention-pct-text" class="sub-stat-value accent-green">61.3%</span>
+                        </div>
+                        <div class="sub-stat-divider"></div>
+                        <div class="sub-stat">
+                            <span class="sub-stat-label">Depreciation</span>
+                            <span id="depreciation-pct-text" class="sub-stat-value accent-amber">38.7%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5-Year Depreciation Forecast Curve -->
+                <div class="analytics-card-inner">
+                    <div class="inner-header">
+                        <div class="title-with-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18M7 16l4-4 4 2 5-6"/>
+                            </svg>
+                            <h3>5-Year Value Trajectory</h3>
+                        </div>
+                        <span class="sub-tag">Future Market Forecast</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="depreciation-canvas" width="540" height="200"></canvas>
+                    </div>
+                    <div class="projection-table-pills" id="projection-pills">
+                        <!-- Filled dynamically by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Key Value Drivers Breakdown -->
+                <div class="analytics-card-inner">
+                    <div class="inner-header">
+                        <div class="title-with-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                            <h3>Top Valuation Drivers</h3>
+                        </div>
+                        <span class="sub-tag">Feature Weight</span>
+                    </div>
+                    <div class="driver-bars" id="driver-bars-list">
+                        <!-- Loaded dynamically from metadata -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Machine Learning Model Performance Section -->
+        <section class="glass-card models-bench-card" aria-label="Machine Learning Benchmarks">
+            <div class="card-header-flex">
+                <div>
+                    <h2 class="card-title">Machine Learning Benchmarks & Model Comparison</h2>
+                    <p class="card-desc">Trained on real automotive marketplace transaction records</p>
+                </div>
+                <div class="header-actions">
+                    <button id="retrain-model-btn" class="retrain-btn" title="Re-execute training and hyperparameter search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 4v6h-6M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        <span id="retrain-btn-text">Retrain Models</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Model Benchmark Table -->
+            <div class="table-responsive">
+                <table class="benchmark-table" id="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Model Architecture</th>
+                            <th>R² Score (Accuracy)</th>
+                            <th>MAE (Lakhs ₹)</th>
+                            <th>RMSE</th>
+                            <th>Evaluation Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="benchmark-table-body">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Visual Diagnostic Plots Grid -->
+            <div class="plots-grid">
+                <div class="plot-box">
+                    <h4 class="plot-title">Feature Importance Weights</h4>
+                    <div class="plot-wrapper">
+                        <img src="/static/feature_importance.png" alt="Feature Importance Chart" id="feat-importance-img" class="responsive-plot" onerror="this.style.display='none'">
+                    </div>
+                </div>
+                <div class="plot-box">
+                    <h4 class="plot-title">Actual vs Predicted Selling Price</h4>
+                    <div class="plot-wrapper">
+                        <img src="/static/actual_vs_predicted.png" alt="Actual vs Predicted Price Chart" id="actual-predicted-img" class="responsive-plot" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>Built with <strong>Python, Scikit-Learn & Modern Web Technologies</strong> • Car Price Prediction Project</p>
+            <div class="footer-links">
+                <a href="https://github.com/manoj5731/Car-price-prediction" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub Repository
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Frontend Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

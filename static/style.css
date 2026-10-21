@@ -1092,3 +1092,189 @@ body.light-theme .price-giant {
 .footer-link:hover {
     color: var(--brand-blue);
 }
+
+/* ==========================================================================
+   Mobile & Tablet Responsiveness Optimization
+   ========================================================================== */
+
+/* Tablets & Small Laptops (<= 960px) */
+@media (max-width: 960px) {
+    .valuation-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .header-container {
+        padding: 12px 18px;
+    }
+    .main-container {
+        padding: 20px 16px 50px;
+    }
+}
+
+/* Smartphones & Phablets (<= 640px) */
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+
+    /* Safe Area & Mobile Header */
+    .header-container {
+        padding: 10px 14px;
+        padding-top: max(10px, env(safe-area-inset-top));
+        gap: 10px;
+    }
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: var(--radius-sm);
+    }
+    .brand-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+    .brand-title {
+        font-size: 1.15rem;
+    }
+    .brand-subtitle {
+        display: none; /* Hide subtitle on mobile for cleaner app bar */
+    }
+    .model-badge .badge-label {
+        display: none; /* Keep dot + model + R² score */
+    }
+    .model-badge {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+
+    /* Main Container & Cards */
+    .main-container {
+        padding: 14px 12px 40px;
+    }
+    .glass-card {
+        padding: 16px;
+        border-radius: var(--radius-md);
+    }
+    .card-header {
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        gap: 10px;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    /* Presets Horizontal Touch Carousel */
+    .presets-scroll {
+        gap: 10px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+    }
+    .preset-card {
+        width: 160px;
+        padding: 12px;
+        scroll-snap-align: start;
+    }
+    .preset-name {
+        font-size: 0.88rem;
+    }
+
+    /* Mobile Form Controls */
+    .form-row-dual {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .input-slider-dual {
+        gap: 10px;
+    }
+    .custom-num-input {
+        width: 80px;
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+    .custom-slider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px; /* Larger touch target for thumbs */
+    }
+
+    /* Form Actions */
+    .form-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .primary-btn, .secondary-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Valuation Hero Result */
+    .hero-valuation-box {
+        padding: 18px 16px;
+    }
+    .price-display-wrapper {
+        margin: 6px 0 12px;
+    }
+    .price-giant {
+        font-size: clamp(2.3rem, 10vw, 3.2rem);
+    }
+    .currency-symbol {
+        font-size: 1.8rem;
+    }
+    .currency-unit {
+        font-size: 1.15rem;
+    }
+    .sub-valuation-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding-top: 12px;
+    }
+    .sub-stat-divider {
+        display: none;
+    }
+    .sub-stat:first-child {
+        grid-column: span 2;
+    }
+
+    /* Canvas Chart */
+    .chart-container {
+        height: 150px;
+    }
+
+    /* Diagnostic Plots */
+    .plots-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    /* Footer */
+    .app-footer {
+        padding: 18px 14px;
+        padding-bottom: max(18px, env(safe-area-inset-bottom));
+    }
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* Extra Small Phones (<= 380px) */
+@media (max-width: 380px) {
+    .pill-content {
+        padding: 8px 6px;
+        font-size: 0.78rem;
+        gap: 4px;
+    }
+    .pill-content svg {
+        display: none; /* Hide icon on tiny screens to avoid text cutoff */
+    }
+    .owner-selector {
+        grid-template-columns: 1fr;
+    }
+    .preset-card {
+        width: 145px;
+    }
+}
+
